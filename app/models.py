@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Column, Integer, String, ForeignKey, text
+from sqlalchemy import JSON, Boolean, Column, Integer, String, ForeignKey, text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
 from database import Base
@@ -11,6 +11,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    is_authorized = Column(Boolean, default=False)
 
     files = relationship("File", back_populates="user", cascade="all, delete-orphan")
 
