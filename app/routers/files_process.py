@@ -1,12 +1,11 @@
 from typing import List
 from fastapi import APIRouter, File, UploadFile
-
+from database import get_db  
 
 router = APIRouter(
     prefix = "/files",
-    tags=['Files']
+    tags=['Files'],
 )
-
 
 
 @router.post("/upload")

@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
-from sqlalchemy.sql.expression import text
+from sqlalchemy import JSON, Column, Integer, String, ForeignKey, text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 
 class User(Base):
@@ -11,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    created_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
     files = relationship("File", back_populates="user", cascade="all, delete-orphan")
 
@@ -22,7 +21,7 @@ class File(Base):
     id = Column(Integer, primary_key=True)
     filename = Column(String, nullable=False)
     filetype = Column(String, nullable=False)
-    uploaded_at = Column(TIMESTAMP(timezone=True), nullable=False)
+    uploaded_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="files")
@@ -34,7 +33,8 @@ class FileContent(Base):
     __tablename__ = "file_contents"
 
     id = Column(Integer, primary_key=True)
-    content_table = Column(String, nullable=False)
+    contents = Column(String, nullable=False)
+    data = Column(JSON, nullable=False)
 
     file_id = Column(Integer, ForeignKey("files.id"))
     file = relationship("File", back_populates="file_contents", cascade="all, delete-orphan")

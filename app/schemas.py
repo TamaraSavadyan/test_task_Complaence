@@ -20,3 +20,10 @@ class File(BaseModel):
     name: str
     type: str
 
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None   
