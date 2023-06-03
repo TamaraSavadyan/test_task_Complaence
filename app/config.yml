@@ -1,0 +1,12 @@
+session:
+  key: CaY5iCkYtN7DqXdiYK1BvmGrQuaSA4Tl4bEk9my0jc0=
+admin:
+  email: admin@admin.com
+  password: admin
+database:
+  host: 0.0.0.0
+  port: 5432
+  user: postgres
+  password: 154326
+  database: test_task_Complaence
+
