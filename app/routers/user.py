@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, File, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import sessionmaker
 from database import get_db
 from schemas import Token, UserCreate, UserResponse
 from models import User
@@ -15,7 +16,7 @@ router = APIRouter(
 @router.post('/login', response_model=Token)
 async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)): 
    
-    user = db.query(User).filter(User.email == user_credentials.username).first()
+    user = await db.query(User).filter(User.email == user_credentials.username).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
@@ -42,24 +43,23 @@ async def createUser(user: UserCreate, db: AsyncSession = Depends(get_db)):
 
     new_user = User(**user.dict())
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    await db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
 
     return new_user
 
-async def check_user_authorization(id: int, db: AsyncSession = Depends(get_db)):
-    async with db.begin():
-        user = await db.get(User, id)
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"User with id {id} is not found")
+async def check_user_authorization(id: int, db: sessionmaker):
+    user = await db.query(User).filter(User.id == id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id {id} is not found")
 
-        if not user.is_authorized:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                                detail=f"User with id {id} is not authorized")
+    if not user.is_authorized:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail=f"User with id {id} is not authorized")
 
-        return user
+    return user
 
 
 @router.get("/{id}", response_model=UserResponse)

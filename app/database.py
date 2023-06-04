@@ -22,4 +22,4 @@ Base = declarative_base()
 
 async def get_db():
     async with Async_session() as db:
-        return db
+        yield db

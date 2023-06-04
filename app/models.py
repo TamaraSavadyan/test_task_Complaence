@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, Boolean, Column, Integer, String, ForeignKey, text
+from sqlalchemy import JSON, Boolean, Column, Integer, LargeBinary, String, ForeignKey, Text, text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
 from database import Base
@@ -23,6 +23,7 @@ class File(Base):
     filename = Column(String, nullable=False)
     filetype = Column(String, nullable=False)
     uploaded_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+    file_data = Column(Text)
 
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="files")

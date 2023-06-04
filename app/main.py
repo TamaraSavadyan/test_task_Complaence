@@ -14,9 +14,6 @@ async def startup():
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-
-        async with get_db() as db:
-            await db.connect()
             print("Database connected")
         
     except Exception as error:
@@ -26,12 +23,18 @@ async def startup():
 
 @app.on_event("shutdown")
 async def shutdown():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-            
-    async with get_db() as db:
-        await db.disconnect()
-        print("Database disconnected") 
+    try:
+        async with engine.begin() as conn:
+            await conn.close()
+            print("Database disconnected") 
+                
+        # async with await get_db() as db:
+        #     await db.disconnect()
+        #     print("Database disconnected")
+
+    except Exception as error:
+            print("Disconnecting from Database failed")
+            print("Error:", error) 
 
 
 @app.get("/")
