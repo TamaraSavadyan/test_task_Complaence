@@ -1,14 +1,14 @@
 import io
 from typing import List
-from fastapi import APIRouter, File, HTTPException, UploadFile, status, Depends
+from fastapi import APIRouter, File, HTTPException, Response, UploadFile, status, Depends
 from sqlalchemy import Column, Integer, String, Table
 from sqlalchemy.ext.asyncio import AsyncSession
-from database import get_db
+from app.database import get_db
 from csv import reader
 from chardet import detect
 from .user import check_user_authorization
-from models import User, File as UploadedFile
-from utils import read_and_filter_csv
+from app.models import User, File as UploadedFile
+from app.utils import read_and_filter_csv
 
 router = APIRouter(
     prefix = "/files",
@@ -96,7 +96,19 @@ async def get_filter_file_data(user_id: int, file_id: int,
     return response
     
 
+@router.delete("/{id}/delete")
+async def delete_file(user_id: int, file_id: int, db: AsyncSession = Depends(get_db)):
+    user = await check_user_authorization(user_id, db)
 
+    file = await db.query(UploadedFile).filter(UploadedFile.id == file_id).first()
+    if not file:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"File with id {file_id} doesn't exist")
+
+    file.delete(synchronize_session=False)
+    await db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
     
 
 

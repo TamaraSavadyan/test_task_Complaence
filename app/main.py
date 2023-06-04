@@ -1,7 +1,6 @@
-import asyncio
 from fastapi import FastAPI
-from routers import files_process, user
-from database import engine, get_db
+from app.routers import files_process, user
+from app.database import engine, get_db
 from models import Base
 
 app = FastAPI(
@@ -27,10 +26,6 @@ async def shutdown():
         async with engine.begin() as conn:
             await conn.close()
             print("Database disconnected") 
-                
-        # async with await get_db() as db:
-        #     await db.disconnect()
-        #     print("Database disconnected")
 
     except Exception as error:
             print("Disconnecting from Database failed")

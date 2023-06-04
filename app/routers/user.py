@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, File, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from database import get_db
-from schemas import Token, UserCreate, UserResponse
+from schemas import Token, UserCreate, UserResponse, SessionMaker
 from models import User
 from utils import verify
 from oauth2 import create_access_token
@@ -48,6 +48,7 @@ async def createUser(user: UserCreate, db: AsyncSession = Depends(get_db)):
     await db.refresh(new_user)
 
     return new_user
+
 
 async def check_user_authorization(id: int, db: sessionmaker):
     user = await db.query(User).filter(User.id == id).first()

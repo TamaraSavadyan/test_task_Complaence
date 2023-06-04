@@ -1,3 +1,4 @@
+from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr
@@ -27,3 +28,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None   
+
+
+class SessionMaker(BaseModel):
+    db: str
