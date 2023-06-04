@@ -28,16 +28,16 @@ class File(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="files")
 
-    file_content = relationship("FileContent", back_populates="file", cascade="all, delete-orphan")
+    # file_content = relationship("FileContent", back_populates="file", cascade="all, delete-orphan")
 
 
-class FileContent(Base):
-    __tablename__ = "file_contents"
+# class FileContent(Base):
+#     __tablename__ = "file_contents"
 
-    id = Column(Integer, primary_key=True)
-    contents = Column(String, nullable=False)
-    data = Column(JSON, nullable=False)
+#     id = Column(Integer, primary_key=True)
+#     contents = Column(String, nullable=False)
+#     data = Column(JSON, nullable=False)
 
-    file_id = Column(Integer, ForeignKey("files.id"))
-    file = relationship("File", back_populates="file_contents", cascade="all, delete-orphan")
+#     file_id = Column(Integer, ForeignKey("files.id"))
+#     file = relationship("File", back_populates="file_contents", cascade="all, delete-orphan")
     
