@@ -1,3 +1,4 @@
+import io
 from typing import List
 from fastapi import APIRouter, File, HTTPException, UploadFile, status, Depends
 from sqlalchemy import Column, Integer, String, Table
@@ -7,6 +8,7 @@ from csv import reader
 from chardet import detect
 from .user import check_user_authorization
 from models import User, File as UploadedFile
+from utils import read_and_filter_csv
 
 router = APIRouter(
     prefix = "/files",
@@ -87,18 +89,10 @@ async def get_filter_file_data(user_id: int, file_id: int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail="File not found")
     
-    file_data = file.file_data.split("\n")
-
-    if columns:
-        filtered_data = []
-        for row in file_data:
-            columns_data = row.split(",")
-            filtered_row = [columns_data[i] for i, column in enumerate(file.columns) if column in columns]
-            filtered_data.append(",".join(filtered_row))
-        file_data = filtered_data
-
-    response = FileDataResponse(file_id=file.id, file_data=file_data)
-
+    csv_file = io.StringIO(file.file_data)
+    filtered_data = read_and_filter_csv(csv_file, columns, column_order_by, sort_type)
+    
+    response = {'Filtered files': filtered_data}
     return response
     
 
