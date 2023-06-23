@@ -49,18 +49,20 @@ async def createUser(user: UserCreate, db: AsyncSession = Depends(get_db)):
 
     return new_user
 
+def check_user_authorization():
+    pass
 
-async def check_user_authorization(id: int, db: sessionmaker):
-    user = await db.query(User).filter(User.id == id).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"User with id {id} is not found")
+# async def check_user_authorization(id: int, db: sessionmaker):
+#     user = await db.query(User).filter(User.id == id).first()
+#     if not user:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+#                             detail=f"User with id {id} is not found")
 
-    if not user.is_authorized:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail=f"User with id {id} is not authorized")
+#     if not user.is_authorized:
+#         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+#                             detail=f"User with id {id} is not authorized")
 
-    return user
+#     return user
 
 
 @router.get("/{id}", response_model=UserResponse)

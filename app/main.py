@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.routers import files_process, user
-from app.database import engine, get_db
+from routers import files_process, user
+from database import engine, get_db
 from models import Base
 
 app = FastAPI(

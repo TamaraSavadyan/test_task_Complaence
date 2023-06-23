@@ -3,12 +3,12 @@ from typing import List
 from fastapi import APIRouter, File, HTTPException, Response, UploadFile, status, Depends
 from sqlalchemy import Column, Integer, String, Table
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import get_db
+from database import get_db
 from csv import reader
 from chardet import detect
 from .user import check_user_authorization
-from app.models import User, File as UploadedFile
-from app.utils import read_and_filter_csv
+from models import User, File as UploadedFile
+from utils import read_and_filter_csv
 
 router = APIRouter(
     prefix = "/files",
